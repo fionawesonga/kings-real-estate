@@ -14,6 +14,14 @@ class Property(models.Model):
         ('ready_to_move_in', 'Ready to Move In'),
     )
 
+    # 3. Property Type (New Field for Buy Page Categories)
+    PROPERTY_TYPE_CHOICES = (
+        ('residential', 'Residential'),
+        ('commercial', 'Commercial'),
+        ('land', 'Land'),
+        ('airbnb', 'Airbnb / Short Term'),
+    )
+
     # Basic Info
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True, help_text="e.g., 'ankori-project-karen'")
@@ -30,6 +38,7 @@ class Property(models.Model):
     # Classification
     listing_type = models.CharField(max_length=10, choices=LISTING_TYPE_CHOICES, default='sale')
     status = models.CharField(max_length=25, choices=STATUS_CHOICES, default='now_selling')
+    property_type = models.CharField(max_length=20, choices=PROPERTY_TYPE_CHOICES, default='residential', help_text="Select category: Residential, Commercial, or Land")
     
     # Financials
     price = models.DecimalField(max_digits=12, decimal_places=2)
@@ -43,22 +52,18 @@ class Property(models.Model):
     # Completion Year
     completion_year = models.IntegerField(null=True, blank=True, help_text="e.g., 2029")
 
-    # Special Flags
+    # Special Flags (Consolidated)
     is_featured = models.BooleanField(default=False, help_text="Check if this is 'Property of the Month'")
+    is_private = models.BooleanField(default=False, help_text="Check if this is a 'Private Listing' (requires password)")
     is_available = models.BooleanField(default=True)
     
     # Media
     main_image = models.ImageField(upload_to='property_images/main/')
-    # NEW: Virtual Tour Link
     virtual_tour_url = models.URLField(blank=True, null=True, help_text="Link to YouTube or Virtual Tour")
     
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    is_featured = models.BooleanField(default=False, help_text="Check if this is 'Property of the Month'")
-    is_private = models.BooleanField(default=False, help_text="Check if this is a 'Private Listing' (requires password)") # NEW
-    is_available = models.BooleanField(default=True)
 
     def __str__(self):
         return self.title
